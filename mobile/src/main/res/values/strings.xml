@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AccTest</string>
+    <string name="title_activity_log_transfer_screen">LogTransferScreen</string>
+</resources>

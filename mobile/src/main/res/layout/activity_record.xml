@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/record_layout"
+    >
+
+    <EditText
+        android:text=""
+        android:inputType="text"
+        android:hint="Name of record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/record_name"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
+
+    <RadioGroup
+        android:id="@+id/sensor_type"
+        android:text="Sensor type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#333333"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/sensor_accelerometer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:text="Acceletometer"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:id="@+id/sensor_nonimplemented"
+            android:text="not implemented"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_weight="1" />
+
+    </RadioGroup>
+
+    <Button
+        android:text="Start new log"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/start_record" />
+
+    <Button
+        android:text="Stop and send log"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/stop_record" />
+
+</LinearLayout>

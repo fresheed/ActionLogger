@@ -27,10 +27,11 @@ public class EventsLogCompressor {
             if (event.getValues().length!=values_amount){
                 throw new LogEncodingException("Values amount should be equal to given parameter");
             }
-            buffer.putLong(events.get(0).getTimestamp());
-            for (float value: events.get(0).getValues()) {
+            buffer.putLong(event.getTimestamp());
+            for (float value: event.getValues()) {
                 buffer.putFloat(value);
             }
+
         }
         return container;
     }
@@ -46,10 +47,10 @@ public class EventsLogCompressor {
         int entries_amount=compressed.length/entry_size;
         ByteBuffer buffer=ByteBuffer.wrap(compressed);
         List<ActionEvent> events=new ArrayList<>();
-        float[] values=new float[values_amount];
 
         for (int num=0; num<entries_amount; num++) {
             long timestamp = buffer.getLong();
+            float[] values=new float[values_amount];
             for (int i = 0; i < values_amount; i++) {
                 values[i] = buffer.getFloat();
             }

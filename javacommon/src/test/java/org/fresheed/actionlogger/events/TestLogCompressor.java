@@ -38,10 +38,9 @@ public class TestLogCompressor{
     @Test
     public void shouldSupportMultipleActions(){
         List<ActionEvent> log=new ArrayList<>();
-        ActionEvent event=new ActionEvent(1010, new float[]{1,2,3});
-        log.add(event);
-        log.add(event);
-        log.add(event);
+        log.add(new ActionEvent(1, new float[]{1,2,3}));
+        log.add(new ActionEvent(2, new float[]{4,5,6}));
+        log.add(new ActionEvent(3, new float[]{7,8,9}));
         byte[] compressed=callCompress(log, 3);
         assertEquals((8+4*3)*3, compressed.length);
         assertSameLogs(log, callDecompress(compressed, 3));

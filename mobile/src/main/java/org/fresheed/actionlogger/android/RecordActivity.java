@@ -1,8 +1,6 @@
 package org.fresheed.actionlogger.android;
 
 import android.app.Activity;
-import android.hardware.Sensor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,17 +12,6 @@ import android.widget.Toast;
 import org.fresheed.actionlogger.data_channels.DataChannel;
 import org.fresheed.actionlogger.data_channels.DropboxChannel;
 import org.fresheed.actionlogger.R;
-import org.fresheed.actionlogger.events.ActionEvent;
-import org.fresheed.actionlogger.events.LoggerConfigException;
-import org.fresheed.actionlogger.transfer.MessageDispatcher;
-import org.fresheed.actionlogger.transfer.MessageReceiver;
-import org.fresheed.actionlogger.utils.EventsWriter;
-
-import java.io.ByteArrayInputStream;
-import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 public class RecordActivity extends Activity{// implements MessageReceiver {
 
@@ -68,7 +55,7 @@ public class RecordActivity extends Activity{// implements MessageReceiver {
 //        current_listener=new DeviceActionLogger(this, Sensor.TYPE_ACCELEROMETER);
 //        try{
 //            current_listener.startLogging();
-//        } catch (LoggerConfigException lce){
+//        } catch (LoggerStateException lce){
 //            Toast.makeText(getApplicationContext(), "Failed to start log", Toast.LENGTH_SHORT).show();
 //        }
     }
@@ -81,7 +68,7 @@ public class RecordActivity extends Activity{// implements MessageReceiver {
 //            SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 //            String time_suffix=date_format.format(new Date(System.currentTimeMillis()));
 //            data_channel.send("Log_"+time_suffix, new ByteArrayInputStream(log_data.getBytes(Charset.forName("UTF-8"))));
-//        } catch (LoggerConfigException lce){
+//        } catch (LoggerStateException lce){
 //            Toast.makeText(getApplicationContext(), "Failed to stop log", Toast.LENGTH_SHORT).show();
 //        }
     }

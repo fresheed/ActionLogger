@@ -3,8 +3,8 @@ package org.fresheed.actionlogger.events;
 /**
  * Created by fresheed on 01.02.17.
  */
-public class LoggerConfigException extends Exception{
-    public LoggerConfigException(String msg){
+public class LoggerStateException extends Exception{
+    public LoggerStateException(String msg){
         super(msg);
     }
 }

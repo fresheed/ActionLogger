@@ -12,3 +12,6 @@
 gradle.properties
 gradle/
 */build/
+data_collector/raw_logs
+data_collector/parsed_logs
+data_collector/WearLogsMonitor

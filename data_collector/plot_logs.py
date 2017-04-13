@@ -1,5 +1,6 @@
 #! /usr/bin/python3
 import os
+import sys
 import numpy as np
 import matplotlib
 matplotlib.use('TkAgg') 
@@ -30,7 +31,12 @@ def plot_multidimensional(time, axes_data):
 
 def main():
     logs_dir="parsed_logs"
-    files=[os.path.join(logs_dir, log) for log in os.listdir(logs_dir)]
+    if sys.argv[1]:
+        select_criteria=lambda arg: sys.argv[1] in arg
+    else:
+        select_criteria=lambda arg: True
+    files=[os.path.join(logs_dir, log) 
+           for log in filter(select_criteria, os.listdir(logs_dir))]
     for path in files:
         plt.figure(num=path)
         time, val_x, val_y, val_z=parse_by_columns(path)

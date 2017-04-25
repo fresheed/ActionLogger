@@ -50,8 +50,7 @@ public class WearMessageAPIDispatcher implements MessageDispatcher, GoogleApiCli
         if (!api_client.isConnected()) {
             api_client.connect();
         }
-        owner.getApplication().registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
-
+        new LifecycleListener(){
             @Override
             public void onActivityStarted(Activity activity) {
                 if (activity.getPackageName().equals(owner.getPackageName())){
@@ -59,31 +58,16 @@ public class WearMessageAPIDispatcher implements MessageDispatcher, GoogleApiCli
                         api_client.connect();
                     }
                 }
-
             }
 
             @Override
             public void onActivityStopped(Activity activity) {
                 if (activity.getPackageName().equals(owner.getPackageName())){
-                    //Wearable.DataApi.removeListener(api_client, WearMessageAPIDispatcher.this);
                     Wearable.MessageApi.removeListener(api_client, WearMessageAPIDispatcher.this);
                     api_client.disconnect();
                 }
             }
-
-            @Override
-            public void onActivityDestroyed(Activity activity) {
-            }
-
-            @Override
-            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
-            @Override
-            public void onActivityResumed(Activity activity) {}
-            @Override
-            public void onActivityPaused(Activity activity) {}
-            @Override
-            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
-        });
+        }.register(owner);
     }
 
     @Override

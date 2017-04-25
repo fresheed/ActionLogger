@@ -9,9 +9,8 @@ import android.widget.Toast;
 
 import org.fresheed.actionlogger.R;
 import org.fresheed.actionlogger.events.ActionEvent;
-import org.fresheed.actionlogger.events.ActionRecorder;
 import org.fresheed.actionlogger.events.ActionSource;
-import org.fresheed.actionlogger.events.LoggerStateException;
+import org.fresheed.actionlogger.events.LoggingSession;
 import org.fresheed.actionlogger.transfer.Message;
 import org.fresheed.actionlogger.transfer.MessageDispatcher;
 import org.fresheed.actionlogger.transfer.MessageReceiver;
@@ -27,8 +26,8 @@ public class WearControlScreen extends Activity implements MessageReceiver {
 
     private static final String TAG="WearControlScreen";
 
-    private final ActionRecorder recorder=new ActionRecorder();
-    private ActionSource current_source;
+    private ActionSource actions_source;
+    private LoggingSession current_session;
 
     private MessageDispatcher data_dispatcher;
 
@@ -43,9 +42,7 @@ public class WearControlScreen extends Activity implements MessageReceiver {
             public void onLayoutInflated(WatchViewStub stub) {
                 data_dispatcher=new WearMessageAPIDispatcher(WearControlScreen.this);
                 data_dispatcher.addReceiver(WearControlScreen.this);
-                current_source=new DeviceSensorActionSource(WearControlScreen.this, Sensor.TYPE_ACCELEROMETER);
-                current_source.setRecorder(recorder);
-                log("Set recorder");
+                actions_source =new DeviceSensorActionSource(WearControlScreen.this, Sensor.TYPE_ACCELEROMETER);
             }
         });
     }
@@ -53,21 +50,15 @@ public class WearControlScreen extends Activity implements MessageReceiver {
     @Override
     public void receive(Message msg) {
         if ("START".equals(msg.name)){
-            try {
-                recorder.startLogging();
-                current_source.activate();
-            } catch (LoggerStateException e) {
-                Toast.makeText(this, "Cannot start logging", Toast.LENGTH_SHORT).show();
-            }
+            current_session=actions_source.startLoggingSession();
+            actions_source.startLoggingSession();
         } else if ("STOP".equals(msg.name)){
-            current_source.deactivate();
-            recorder.stopLogging();
-            List<ActionEvent> events=recorder.getLoggedEvents();
+            List<ActionEvent> events=current_session.stopAndRetrieve();
             try {
                 byte[] compressed_log=new EventsLogCompressor().compressEventsLog(events, events.get(0).getValues().length);
                 data_dispatcher.sendAll(new Message("ACTION_LOG", compressed_log));
             } catch (EventsLogCompressor.LogEncodingException e) {
-                data_dispatcher.sendAll(new Message("ERROR"));
+                data_dispatcher.sendAll(new Message("ERROR")); //29485242110394
             }
 
         }

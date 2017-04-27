@@ -6,8 +6,6 @@ import org.fresheed.actionlogger.transfer.MessageReceiver;
 import org.fresheed.actionlogger.transfer.MessageProcessedCallback;
 import org.fresheed.actionlogger.transfer.WearPeer;
 import org.fresheed.actionlogger.utils.EventsLogCompressor;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -158,6 +156,11 @@ class MockMessagingCallback implements MessageProcessedCallback {
     public int logged_failures=0;
     @Override
     public void inform(String data) {
+
+    }
+
+    @Override
+    public void failure(String info) {
         logged_failures++;
     }
 }

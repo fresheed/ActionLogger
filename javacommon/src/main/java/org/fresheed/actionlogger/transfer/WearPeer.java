@@ -32,26 +32,28 @@ public class WearPeer implements MessageReceiver {
     public void receive(Message msg) {
         if ("START".equals(msg.name)){
             if (state==CurrentState.LOGGING){
-                callback.inform("Logging already runs");
+                callback.failure("Logging already runs");
             }
             state=CurrentState.LOGGING;
             current_session=actions_source.startLoggingSession();
             actions_source.startLoggingSession();
+            callback.inform("START processed");
         } else if ("STOP".equals(msg.name)){
             if (state==CurrentState.WAITING){
-                callback.inform("No running session to stop");
+                callback.failure("No running session to stop");
                 return;
             }
             ActionLog log=current_session.stopAndRetrieve();
             if (log.getEvents().size()==0){
-                callback.inform("Zero-length log received - falling back to initial condition");
+                callback.failure("Zero-length log received - falling back to initial condition");
                 return;
             }
             byte[] compressed_log=new EventsLogCompressor().compressEventsLog(log);
             dispatcher.sendAll(new Message("ACTION_LOG", compressed_log));
             state=CurrentState.WAITING;
+            callback.inform("STOP processed");
         } else {
-            callback.inform("Unknown message: "+msg.name);
+            callback.failure("Unknown message: "+msg.name);
         }
     }
 }

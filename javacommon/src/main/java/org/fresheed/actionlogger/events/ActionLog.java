@@ -18,13 +18,6 @@ public class ActionLog {
         this.num_axes=num_axes;
     }
 
-//    public ActionLog(List<ActionEvent> events, int num_axes) throws LoggingException{
-//        this.num_axes=num_axes;
-//        for (ActionEvent event: events){
-//            addEvent(event);
-//        }
-//    }
-
     public void addEvent(ActionEvent event) throws LoggingException{
         if (event.getValues().length!=num_axes){
             throw new LoggingException("Attempted to add event with wrong axes amount");

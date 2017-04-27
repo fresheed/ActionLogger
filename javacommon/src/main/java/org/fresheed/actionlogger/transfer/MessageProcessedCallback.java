@@ -5,4 +5,5 @@ package org.fresheed.actionlogger.transfer;
  */
 public interface MessageProcessedCallback {
     void inform(String info);
+    void failure(String info);
 }

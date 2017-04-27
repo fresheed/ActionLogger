@@ -8,28 +8,24 @@ import android.util.Log;
 import android.widget.Toast;
 
 import org.fresheed.actionlogger.R;
-import org.fresheed.actionlogger.events.ActionEvent;
-import org.fresheed.actionlogger.events.ActionSource;
-import org.fresheed.actionlogger.events.LoggingSession;
-import org.fresheed.actionlogger.transfer.Message;
+import org.fresheed.actionlogger.events.ActionsSource;
 import org.fresheed.actionlogger.transfer.MessageDispatcher;
 import org.fresheed.actionlogger.transfer.MessageReceiver;
-import org.fresheed.actionlogger.utils.EventsLogCompressor;
-
-import java.util.List;
+import org.fresheed.actionlogger.transfer.MessageProcessedCallback;
+import org.fresheed.actionlogger.transfer.WearPeer;
 
 /**
  * Created by fresheed on 02.02.17.
  */
 
-public class WearControlScreen extends Activity implements MessageReceiver {
+public class WearControlScreen extends Activity implements MessageProcessedCallback {
 
     private static final String TAG="WearControlScreen";
 
-    private ActionSource actions_source;
-    private LoggingSession current_session;
+    private ActionsSource actions_source;
 
     private MessageDispatcher data_dispatcher;
+    private MessageReceiver wear_peer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,31 +37,18 @@ public class WearControlScreen extends Activity implements MessageReceiver {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
                 data_dispatcher=new WearMessageAPIDispatcher(WearControlScreen.this);
-                data_dispatcher.addReceiver(WearControlScreen.this);
-                actions_source =new DeviceSensorActionSource(WearControlScreen.this, Sensor.TYPE_ACCELEROMETER);
+                actions_source =new DeviceSensorActionsSource(WearControlScreen.this, Sensor.TYPE_ACCELEROMETER);
+                wear_peer=new WearPeer(data_dispatcher, actions_source, WearControlScreen.this);
             }
         });
-    }
-
-    @Override
-    public void receive(Message msg) {
-        if ("START".equals(msg.name)){
-            current_session=actions_source.startLoggingSession();
-            actions_source.startLoggingSession();
-        } else if ("STOP".equals(msg.name)){
-            List<ActionEvent> events=current_session.stopAndRetrieve();
-            try {
-                byte[] compressed_log=new EventsLogCompressor().compressEventsLog(events, events.get(0).getValues().length);
-                data_dispatcher.sendAll(new Message("ACTION_LOG", compressed_log));
-            } catch (EventsLogCompressor.LogEncodingException e) {
-                data_dispatcher.sendAll(new Message("ERROR")); //29485242110394
-            }
-
-        }
     }
 
     static void log(String msg){
         Log.d("WCS", msg);
     }
 
+    @Override
+    public void inform() {
+        Toast.makeText(this, "Error occured on message processing", Toast.LENGTH_SHORT);
+    }
 }

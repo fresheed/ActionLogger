@@ -9,24 +9,31 @@ import android.hardware.SensorManager;
 import android.widget.Toast;
 
 import org.fresheed.actionlogger.events.ActionEvent;
-import org.fresheed.actionlogger.events.ActionSource;
+import org.fresheed.actionlogger.events.ActionLog;
+import org.fresheed.actionlogger.events.ActionsSource;
+import org.fresheed.actionlogger.events.LoggingException;
 import org.fresheed.actionlogger.events.LoggingSession;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by fresheed on 30.01.17.
  */
 
-public class DeviceSensorActionSource implements ActionSource {
+public class DeviceSensorActionsSource implements ActionsSource {
+
+    private static final Map<Integer, Integer> sensors_cardinalities=new HashMap<Integer, Integer>(){{
+        put(Sensor.TYPE_ACCELEROMETER, 3);
+    }};
 
     private final SensorManager sensor_manager;
     private final Sensor sensor;
-    private final List<ActionEvent> logged_events=new ArrayList<>();
     private final List<DeviceLoggingSession> sessions_to_cleanup=new ArrayList<>();
 
-    public DeviceSensorActionSource(Activity owner, int sensor_type){
+    public DeviceSensorActionsSource(Activity owner, int sensor_type){
         sensor_manager =(SensorManager)owner.getSystemService(Context.SENSOR_SERVICE);
         sensor = sensor_manager.getDefaultSensor(sensor_type);
         new LifecycleListener(){
@@ -48,18 +55,18 @@ public class DeviceSensorActionSource implements ActionSource {
     }
 
     private class DeviceLoggingSession implements LoggingSession, SensorEventListener{
-        private final List<ActionEvent> logged_events=new ArrayList<>();
+        private final ActionLog log=new ActionLog(sensors_cardinalities.get(sensor.getType()));
 
         DeviceLoggingSession(){
             if  (!sensor_manager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)){
-                throw new RuntimeException("Failed to start listening for sensor events - processing not implemented");
+                throw new RuntimeException("Failed to start listening for sensor events; error processing not implemented");
             }
         }
 
         @Override
-        public List<ActionEvent> stopAndRetrieve() {
+        public ActionLog stopAndRetrieve() {
             sensor_manager.unregisterListener(this);
-            return logged_events;
+            return log;
         }
 
         @Override
@@ -68,7 +75,11 @@ public class DeviceSensorActionSource implements ActionSource {
                 return;
             }
             // seems like system passes same array here, so copy it
-            logged_events.add(new ActionEvent(event.timestamp, event.values.clone()));
+            try {
+                log.addEvent(new ActionEvent(event.timestamp, event.values.clone()));
+            } catch (LoggingException e) {
+                stopAndRetrieve();
+            }
         }
 
         @Override

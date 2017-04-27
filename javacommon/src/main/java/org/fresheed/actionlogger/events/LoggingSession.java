@@ -9,5 +9,5 @@ import javax.swing.Action;
  */
 
 public interface LoggingSession {
-    List<ActionEvent> stopAndRetrieve();
+    ActionLog stopAndRetrieve();
 }

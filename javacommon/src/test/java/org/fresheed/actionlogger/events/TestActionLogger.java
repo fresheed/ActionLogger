@@ -20,7 +20,7 @@ public class TestActionLogger{
     private static final ActionEvent default_event=new ActionEvent(DEFAULT_TIMESTAMP, DEFAULT_VALUES);
 
 //    @Test
-//    public void testIfNoActionsLogged() throws LoggerStateException {
+//    public void testIfNoActionsLogged() throws LoggingException {
 //        ActionRecorder logger=new ActionRecorder();
 //        logger.startLogging();
 //        logger.stopLogging();
@@ -28,7 +28,7 @@ public class TestActionLogger{
 //    }
 //
 //    @Test
-//    public void testSingleActionLogged() throws LoggerStateException {
+//    public void testSingleActionLogged() throws LoggingException {
 //        ActionRecorder logger=new ActionRecorder();
 //        logger.startLogging();
 //        logger.addEvent(default_event);
@@ -41,7 +41,7 @@ public class TestActionLogger{
 //    }
 //
 //    @Test
-//    public void testLoggedInCorrectOrder() throws LoggerStateException {
+//    public void testLoggedInCorrectOrder() throws LoggingException {
 //        ActionRecorder logger=new ActionRecorder();
 //        logger.startLogging();
 //        logger.addEvent(default_event);
@@ -56,7 +56,7 @@ public class TestActionLogger{
 //    }
 //
 //    @Test
-//    public void testEventsSkippedBeforeStart() throws LoggerStateException {
+//    public void testEventsSkippedBeforeStart() throws LoggingException {
 //        ActionRecorder logger=new ActionRecorder();
 //        logger.addEvent(default_event);
 //        logger.startLogging();
@@ -65,7 +65,7 @@ public class TestActionLogger{
 //    }
 //
 //    @Test
-//    public void testEventsSkippedAfterStop() throws LoggerStateException {
+//    public void testEventsSkippedAfterStop() throws LoggingException {
 //        ActionRecorder logger=new ActionRecorder();
 //        logger.startLogging();
 //        logger.stopLogging();
@@ -74,7 +74,7 @@ public class TestActionLogger{
 //    }
 //
 //    @Test
-//    public void testEventsErasedOnRestart() throws LoggerStateException {
+//    public void testEventsErasedOnRestart() throws LoggingException {
 //        ActionRecorder logger=new ActionRecorder();
 //        logger.startLogging();
 //        logger.addEvent(default_event);
@@ -86,17 +86,17 @@ public class TestActionLogger{
 //    }
 //
 //    @Test
-//    public void testMultipleStartsAreIncorrect() throws LoggerStateException {
+//    public void testMultipleStartsAreIncorrect() throws LoggingException {
 //        ActionRecorder logger=new ActionRecorder();
 //        logger.startLogging();
 //        try {
 //            logger.startLogging();
 //            Assert.fail("LCE not raised");
-//        } catch (LoggerStateException lce){}
+//        } catch (LoggingException lce){}
 //    }
 //
 ////    @Test
-////    public void testTooMuchActionsLogged() throws LoggerStateException {
+////    public void testTooMuchActionsLogged() throws LoggingException {
 ////        ActionRecorder logger=new ActionRecorder();
 ////        logger.startLogging();
 ////        for (int i=0; i<Integer.MAX_VALUE; i++){

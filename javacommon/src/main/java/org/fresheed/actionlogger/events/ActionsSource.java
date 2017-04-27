@@ -6,6 +6,6 @@ import java.util.List;
  * Created by fresheed on 26.02.17.
  */
 
-public interface ActionSource {
+public interface ActionsSource {
     LoggingSession startLoggingSession();
 }

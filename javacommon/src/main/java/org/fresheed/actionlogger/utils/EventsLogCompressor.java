@@ -1,6 +1,8 @@
 package org.fresheed.actionlogger.utils;
 
 import org.fresheed.actionlogger.events.ActionEvent;
+import org.fresheed.actionlogger.events.ActionLog;
+import org.fresheed.actionlogger.events.LoggingException;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -15,18 +17,14 @@ public class EventsLogCompressor {
     private static final int BYTES_FOR_SINGLE_VALUE=Float.SIZE/8;
     private static final int BYTES_FOR_TIMESTAMP=Long.SIZE/8;
 
-    public byte[] compressEventsLog(List<ActionEvent> events, int values_amount) throws LogEncodingException{
-        if (values_amount<=0){
-            throw new LogEncodingException("Values amount should be positive");
-        }
-        int entry_size=BYTES_FOR_TIMESTAMP+BYTES_FOR_SINGLE_VALUE*values_amount;
+    public byte[] compressEventsLog(ActionLog log){
+        List<ActionEvent> events=log.getEvents();
+        int values_amount=log.getNumAxes();
+        int entry_size=getEntrySize(values_amount);
         int buffer_size=entry_size*events.size();
         byte[] container=new byte[buffer_size];
         ByteBuffer buffer=ByteBuffer.wrap(container);
         for (ActionEvent event: events) {
-            if (event.getValues().length!=values_amount){
-                throw new LogEncodingException("Values amount should be equal to given parameter");
-            }
             buffer.putLong(event.getTimestamp());
             for (float value: event.getValues()) {
                 buffer.putFloat(value);
@@ -36,11 +34,11 @@ public class EventsLogCompressor {
         return container;
     }
 
-    public List<ActionEvent> decompressEventsLog(byte[] compressed, int values_amount) throws LogEncodingException{
+    public ActionLog decompressEventsLog(byte[] compressed, int values_amount) throws LogEncodingException{
         if (values_amount<=0){
             throw new LogEncodingException("Values amount should be positive");
         }
-        int entry_size=BYTES_FOR_TIMESTAMP+BYTES_FOR_SINGLE_VALUE*values_amount;
+        int entry_size=getEntrySize(values_amount);
         if (compressed.length % entry_size != 0){
             throw new LogEncodingException("Computed entry length does not match actual value");
         }
@@ -56,7 +54,19 @@ public class EventsLogCompressor {
             }
             events.add(new ActionEvent(timestamp, values));
         }
-        return events;
+        ActionLog log=new ActionLog(values_amount);
+        try {
+            for (ActionEvent event: events){
+                log.addEvent(event);
+            }
+            return log;
+        } catch (LoggingException e) {
+            throw new RuntimeException("It should not happen");
+        }
+    }
+
+    public static int getEntrySize(int values_amount){
+        return BYTES_FOR_TIMESTAMP+BYTES_FOR_SINGLE_VALUE*values_amount;
     }
 
     public static class LogEncodingException extends Exception {

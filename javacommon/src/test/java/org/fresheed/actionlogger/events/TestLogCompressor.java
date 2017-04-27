@@ -47,31 +47,10 @@ public class TestLogCompressor{
     }
 
     @Test
-    public void shouldRejectEncodingZeroLengthActions(){
-        List<ActionEvent> log=new ArrayList<>();
-        try{
-            new EventsLogCompressor().compressEventsLog(log, 0);
-            fail("Compressor not failed on zero-length event's values");
-        } catch (EventsLogCompressor.LogEncodingException e){}
-    }
-
-    @Test
     public void shouldRejectParsingLengthActions(){
         try{
             new EventsLogCompressor().decompressEventsLog(new byte[]{1,2,3}, 0);
             fail("Compressor not failed on zero-length event's values");
-        } catch (EventsLogCompressor.LogEncodingException e){}
-    }
-
-    @Test
-    public void shouldRejectEncodingDifferentLengthActions(){
-        List<ActionEvent> log=new ArrayList<>();
-        log.add(new ActionEvent(1010, new float[]{1,2,3}));
-        log.add(new ActionEvent(2020, new float[]{1,2}));
-
-        try{
-            new EventsLogCompressor().compressEventsLog(log, 3);
-            fail("Compressor not failed on different lengths of events' values");
         } catch (EventsLogCompressor.LogEncodingException e){}
     }
 
@@ -108,17 +87,20 @@ public class TestLogCompressor{
     }
 
     private byte[] callCompress(List<ActionEvent> events, int values_amount){
+        ActionLog log=new ActionLog(values_amount);
         try {
-            return new EventsLogCompressor().compressEventsLog(events, values_amount);
-        } catch (EventsLogCompressor.LogEncodingException e){
-            fail("Exception was thrown on compressing: "+e);
-            return null;
+            for (ActionEvent event: events){
+                log.addEvent(event);
+            }
+        } catch (LoggingException e) {
+            throw new RuntimeException("It should not happen");
         }
+        return new EventsLogCompressor().compressEventsLog(log);
     }
 
     private List<ActionEvent> callDecompress(byte[] compressed, int values_amount){
         try {
-            return new EventsLogCompressor().decompressEventsLog(compressed, values_amount);
+            return new EventsLogCompressor().decompressEventsLog(compressed, values_amount).getEvents();
         } catch (EventsLogCompressor.LogEncodingException e){
             fail("Exception was thrown on decompressing: "+e);
             return null;

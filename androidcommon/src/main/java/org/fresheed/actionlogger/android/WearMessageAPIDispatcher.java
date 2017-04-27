@@ -33,7 +33,7 @@ public class WearMessageAPIDispatcher implements MessageDispatcher, GoogleApiCli
 
     private static final String TAG="WMAPID";
     private static final String MESSAGES_PATH_PREFIX ="/LOGGER_MESSAGES-";
-    private static final int MAX_PAYLOAD_LENGTH=90000;
+    private static final int MAX_PAYLOAD_LENGTH=100000;
 
     private GoogleApiClient api_client;
     private Context android_context;
@@ -74,7 +74,7 @@ public class WearMessageAPIDispatcher implements MessageDispatcher, GoogleApiCli
     public void sendAll(final Message msg) {
         final String full_path= MESSAGES_PATH_PREFIX +msg.name;
         if (msg.payload.length>MAX_PAYLOAD_LENGTH){
-            throw new IllegalArgumentException("Payload too large - "+msg.payload);
+            throw new IllegalArgumentException("Payload too large - "+msg.payload.length);
         }
         new AsyncTask<Void, Void, Void>(){
             protected Void doInBackground(Void... urls) {
@@ -130,7 +130,7 @@ public class WearMessageAPIDispatcher implements MessageDispatcher, GoogleApiCli
     }
 
     static void log(String msg){
-        Log.d("WDLD", msg);
+        Log.i("WDLD", msg);
     }
 
     @Override

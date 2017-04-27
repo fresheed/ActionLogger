@@ -68,34 +68,69 @@ public class TestWearPeer {
     }
 
     @Test
-    public void shouldFailOnEmptyLog() throws EventsLogCompressor.LogEncodingException {
-        List<ActionEvent> events=new ArrayList<ActionEvent>();
-        MockActionsSource source=new MockActionsSource(events);
+    public void shouldRecoverAfterEmptyLog() throws EventsLogCompressor.LogEncodingException {
+        final List<ActionEvent> events=new ArrayList<ActionEvent>(){{
+            add(new ActionEvent(1, new float[]{1.0f, 2.0f, 3.0f}));
+            add(new ActionEvent(2, new float[]{4.0f, 5.0f, 6.0f}));
+        }};
+        MockActionsSource source=new MockActionsSource(events){
+            private int counter=0;
+            @Override
+            public LoggingSession startLoggingSession() {
+                if (counter++ == 0){
+                    mock_events=new ArrayList<>();
+                } else {
+                    mock_events=events;
+                }
+                return super.startLoggingSession();
+            }
+        };
         MockMessageDispatcher dispatcher=new MockMessageDispatcher();
         MockMessagingCallback callback=new MockMessagingCallback();
         WearPeer wear=new WearPeer(dispatcher, source, callback);
         wear.receive(new Message("START"));
         wear.receive(new Message("STOP"));
         assertThat(callback.logged_failures, is(1));
-    }
-
-    @Test
-    public void shouldIgnoreSecondStart() throws EventsLogCompressor.LogEncodingException {
-        List<ActionEvent> events=new ArrayList<ActionEvent>(){{
-            add(new ActionEvent(1, new float[]{1.0f, 2.0f, 3.0f}));
-            add(new ActionEvent(2, new float[]{4.0f, 5.0f, 6.0f}));
-        }};
-        MockActionsSource source=new MockActionsSource(events);
-        MockMessageDispatcher dispatcher=new MockMessageDispatcher();
-        MockMessagingCallback callback=new MockMessagingCallback();
-        WearPeer wear=new WearPeer(dispatcher, source, callback);
-        wear.receive(new Message("START"));
         wear.receive(new Message("START"));
         wear.receive(new Message("STOP"));
         assertThat(dispatcher.logged_messages.size(), is(1));
         assertThat(dispatcher.logged_messages.get(0).name, is("ACTION_LOG"));
         assertThat(dispatcher.logged_messages.get(0).payload.length, is(EventsLogCompressor.getEntrySize(3)*2));
+        assertThat(callback.logged_failures, is(1)); // no new failures
+
+    }
+
+    @Test
+    public void shouldIgnoreSecondStart() throws EventsLogCompressor.LogEncodingException {
+        final List<ActionEvent> events_1=new ArrayList<ActionEvent>(){{
+            add(new ActionEvent(1, new float[]{1.0f, 2.0f, 3.0f}));
+        }};
+        final List<ActionEvent> events_2=new ArrayList<ActionEvent>(){{
+            add(new ActionEvent(1, new float[]{1.0f, 2.0f, 3.0f}));
+            add(new ActionEvent(2, new float[]{4.0f, 5.0f, 6.0f}));
+        }};
+        MockActionsSource source=new MockActionsSource(null){
+            private int counter=0;
+            @Override
+            public LoggingSession startLoggingSession() {
+                if (counter++ == 0){
+                    mock_events=events_1;
+                } else {
+                    mock_events=events_2;
+                }
+                return super.startLoggingSession();
+            }
+        };
+        MockMessageDispatcher dispatcher=new MockMessageDispatcher();
+        MockMessagingCallback callback=new MockMessagingCallback();
+        WearPeer wear=new WearPeer(dispatcher, source, callback);
+        wear.receive(new Message("START"));
+        wear.receive(new Message("START"));
         assertThat(callback.logged_failures, is(1));
+        wear.receive(new Message("STOP"));
+        assertThat(dispatcher.logged_messages.size(), is(1));
+        assertThat(dispatcher.logged_messages.get(0).name, is("ACTION_LOG"));
+        assertThat(dispatcher.logged_messages.get(0).payload.length, is(EventsLogCompressor.getEntrySize(3)*1));
     }
 
     @Test
@@ -111,7 +146,7 @@ public class TestWearPeer {
 }
 
 class MockActionsSource implements ActionsSource{
-    private final List<ActionEvent> mock_events;
+    protected List<ActionEvent> mock_events;
     private static final int TEST_CARDINALITY=3;
 
     MockActionsSource(List<ActionEvent> mock_events){

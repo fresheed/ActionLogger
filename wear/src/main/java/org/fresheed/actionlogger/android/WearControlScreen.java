@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.wearable.view.WatchViewStub;
 import android.text.TextUtils;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,8 @@ public class WearControlScreen extends Activity implements MessageProcessedCallb
                 last_messages_view=(TextView) findViewById(R.id.wear_last_messages);
             }
         });
+        // should be used for research purposes only!
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
     @Override
     public void inform(String message) {

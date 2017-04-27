@@ -22,7 +22,7 @@ public class ActionLog {
         if (event.getValues().length!=num_axes){
             throw new LoggingException("Attempted to add event with wrong axes amount");
         }
-        if (events.size()>MAX_LOG_LENGTH){
+        if (events.size()==MAX_LOG_LENGTH){
             throw new LoggingException("Too much events were logged already");
         }
         events.add(event);

@@ -31,27 +31,27 @@ public class WearPeer implements MessageReceiver {
     @Override
     public void receive(Message msg) {
         if ("START".equals(msg.name)){
-            if (state==CurrentState.LOGGING){
+            if (state==CurrentState.WAITING){
+                state = CurrentState.LOGGING;
+                current_session = actions_source.startLoggingSession();
+                callback.inform("START processed");
+            } else {
                 callback.failure("Logging already runs");
             }
-            state=CurrentState.LOGGING;
-            current_session=actions_source.startLoggingSession();
-            actions_source.startLoggingSession();
-            callback.inform("START processed");
         } else if ("STOP".equals(msg.name)){
-            if (state==CurrentState.WAITING){
+            if (state==CurrentState.LOGGING){
+                ActionLog log=current_session.stopAndRetrieve();
+                if (log.getEvents().size()!=0){
+                    byte[] compressed_log=new EventsLogCompressor().compressEventsLog(log);
+                    dispatcher.sendAll(new Message("ACTION_LOG", compressed_log));
+                    callback.inform("STOP processed");
+                } else {
+                    callback.failure("Zero-length log received - falling back to initial condition");
+                }
+                state=CurrentState.WAITING;
+            } else {
                 callback.failure("No running session to stop");
-                return;
             }
-            ActionLog log=current_session.stopAndRetrieve();
-            if (log.getEvents().size()==0){
-                callback.failure("Zero-length log received - falling back to initial condition");
-                return;
-            }
-            byte[] compressed_log=new EventsLogCompressor().compressEventsLog(log);
-            dispatcher.sendAll(new Message("ACTION_LOG", compressed_log));
-            state=CurrentState.WAITING;
-            callback.inform("STOP processed");
         } else {
             callback.failure("Unknown message: "+msg.name);
         }

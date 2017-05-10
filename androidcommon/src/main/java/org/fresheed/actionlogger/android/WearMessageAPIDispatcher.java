@@ -53,7 +53,7 @@ public class WearMessageAPIDispatcher implements MessageDispatcher, GoogleApiCli
         new LifecycleListener(){
             @Override
             public void onActivityStarted(Activity activity) {
-                if (activity.getPackageName().equals(owner.getPackageName())){
+                if (activity.getClass().getSimpleName().equals(owner.getClass().getSimpleName())){
                     if (!api_client.isConnected()) {
                         api_client.connect();
                     }
@@ -62,7 +62,7 @@ public class WearMessageAPIDispatcher implements MessageDispatcher, GoogleApiCli
 
             @Override
             public void onActivityStopped(Activity activity) {
-                if (activity.getPackageName().equals(owner.getPackageName())){
+                if (activity.getClass().getSimpleName().equals(owner.getClass().getSimpleName())){
                     Wearable.MessageApi.removeListener(api_client, WearMessageAPIDispatcher.this);
                     api_client.disconnect();
                 }

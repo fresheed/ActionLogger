@@ -49,23 +49,16 @@ public class WearMessageAPIDispatcher implements MessageDispatcher, GoogleApiCli
                 .build();
         if (!api_client.isConnected()) {
             api_client.connect();
+            System.err.println("Calling connect from dispatcher");
+            //Thread.dumpStack();
         }
+
         new LifecycleListener(){
             @Override
-            public void onActivityStarted(Activity activity) {
-                if (activity.getClass().getSimpleName().equals(owner.getClass().getSimpleName())){
-                    if (!api_client.isConnected()) {
-                        api_client.connect();
-                    }
-                }
-            }
-
-            @Override
-            public void onActivityStopped(Activity activity) {
-                if (activity.getClass().getSimpleName().equals(owner.getClass().getSimpleName())){
-                    Wearable.MessageApi.removeListener(api_client, WearMessageAPIDispatcher.this);
-                    api_client.disconnect();
-                }
+            public void onStoppedCallback() {
+                Wearable.MessageApi.removeListener(api_client, WearMessageAPIDispatcher.this);
+                api_client.disconnect();
+                System.err.println("Disconnecting");
             }
         }.register(owner);
     }
@@ -114,8 +107,9 @@ public class WearMessageAPIDispatcher implements MessageDispatcher, GoogleApiCli
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.d(TAG, "onConnected: " + bundle);
-        //Wearable.DataApi.addListener(api_client, this);
         Wearable.MessageApi.addListener(api_client, this);
+        System.err.println("OnConnected");
+        //Thread.dumpStack();
         Toast.makeText(android_context, "Connection established", Toast.LENGTH_SHORT).show();
     }
 

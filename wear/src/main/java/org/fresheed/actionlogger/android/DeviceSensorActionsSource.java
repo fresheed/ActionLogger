@@ -33,13 +33,13 @@ public class DeviceSensorActionsSource implements ActionsSource {
     private final Sensor sensor;
     private final List<DeviceLoggingSession> sessions_to_cleanup=new ArrayList<>();
 
-    public DeviceSensorActionsSource(Activity owner, int sensor_type){
+    public DeviceSensorActionsSource(final Activity owner, int sensor_type){
         sensor_manager =(SensorManager)owner.getSystemService(Context.SENSOR_SERVICE);
         sensor = sensor_manager.getDefaultSensor(sensor_type);
         new LifecycleListener(){
             @Override
-            public void onActivityStopped(Activity activity){
-                Toast.makeText(activity, "Shutting down all logging sessions", Toast.LENGTH_SHORT);
+            public void onStoppedCallback(){
+                Toast.makeText(owner, "Shutting down all logging sessions", Toast.LENGTH_SHORT);
                 for (DeviceLoggingSession session: sessions_to_cleanup){
                     session.stopAndRetrieve();
                 }

@@ -1,14 +1,19 @@
 language: android
 jdk: oraclejdk8 # to avoid 'Unsupported major.minor version' failure at Travis
-android:
-  components:
-  - tools
-  - build-tools-25.0.2
-  - android-22
-  licenses:
-  - 'android-sdk-preview-license-.+'
-  - 'android-sdk-license-.+'
-  - 'google-gdk-license-.+'
+# manually install because of license accept issues - see previous builds
+install:
+- echo y | android update sdk -u -a -t tools
+- echo y | android update sdk -u -a -t build-tools-25.0.2
+- echo y | android update sdk -u -a -t android-22
+# android:
+#   components:
+#   - tools
+#   - build-tools-25.0.2
+#   - android-22
+# licenses:
+# - 'android-sdk-preview-license-.+'
+# - 'android-sdk-license-.+'
+# - 'google-gdk-license-.+'
 
 script: ./gradlew build
 

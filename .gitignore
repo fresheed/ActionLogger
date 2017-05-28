@@ -10,7 +10,9 @@
 *~
 .idea
 gradle.properties
-gradle/
+# we need gradle-wrapper.jar in order to Travis build run properly
+gradle/*
+!gradle/wrapper
 */build/
 *.pyc
 *flymake*

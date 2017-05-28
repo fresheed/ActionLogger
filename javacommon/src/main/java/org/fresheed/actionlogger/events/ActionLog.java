@@ -3,7 +3,6 @@ package org.fresheed.actionlogger.events;
 import java.util.ArrayList;
 import java.util.List;
 
-import sun.rmi.runtime.Log;
 
 /**
  * Created by fresheed on 25.04.17.

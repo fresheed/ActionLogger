@@ -17,6 +17,7 @@ public class DropboxChannel implements DataChannel {
     private final String access_token = "1DnFiiCwVXAAAAAAAAAAJciG0Z2GDvSLsN-uBGKXPkI1D2X48SGcdIP5QyWWY7ci";
 
     @Override
+    @SuppressWarnings("deprecation")
     public void send(String name, InputStream data) {
         DbxRequestConfig config = new DbxRequestConfig(
                 "AccTest/1.0", Locale.getDefault().toString());

@@ -18,8 +18,7 @@ android:
 # - 'android-sdk-license-.+'
 # - 'google-gdk-license-.+'
 
-#script: ./gradlew build
-script: ./run_lint_verbose.sh
+script: ./gradlew build
 
 
 

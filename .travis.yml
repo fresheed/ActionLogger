@@ -10,6 +10,7 @@ before_install:
 android:
   components:
   - tools
+  - platform-tools
   - build-tools-25.0.2
   - android-22
 # licenses:

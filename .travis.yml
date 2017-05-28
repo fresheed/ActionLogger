@@ -1,7 +1,7 @@
 language: android
 jdk: oraclejdk8 # to avoid 'Unsupported major.minor version' failure at Travis
 # manually install because of license accept issues - see previous builds
-before_install
+before_install:
 - ./licenses_hack.sh
 install:
 - echo y | android update sdk -u -a -t tools

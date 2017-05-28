@@ -2,6 +2,7 @@ language: android
 jdk: oraclejdk8 # to avoid 'Unsupported major.minor version' failure at Travis
 android:
   components:
+  - tools
   - build-tools-25.0.2
   - android-22
 

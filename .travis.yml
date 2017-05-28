@@ -18,7 +18,7 @@ android:
 # - 'android-sdk-license-.+'
 # - 'google-gdk-license-.+'
 
-script: ./gradlew build
+script: ./gradlew -Dorg.gradle.jvmargs=-Xmx3072m build
 
 
 

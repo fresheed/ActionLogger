@@ -1,12 +1,7 @@
 package org.fresheed.actionlogger.android;
 
-import android.app.Activity;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import org.fresheed.actionlogger.R;
 import org.fresheed.actionlogger.data_channels.DataChannel;
@@ -14,28 +9,23 @@ import org.fresheed.actionlogger.data_channels.DropboxChannel;
 import org.fresheed.actionlogger.transfer.Message;
 import org.fresheed.actionlogger.transfer.MessageDispatcher;
 import org.fresheed.actionlogger.transfer.MessageReceiver;
+import org.fresheed.actionlogger.transfer.TransferPeer;
 
-import java.io.ByteArrayInputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-public class LogTransferScreen extends Activity implements MessageReceiver {
+public class LogTransferScreen extends DebugActivity{
 
     private MessageDispatcher data_dispatcher;
     private Button record_starter, record_stopper;
-    private final DataChannel data_channel=new DropboxChannel();
+    private final DataChannel data_channel=new AndroidWorkerChannel(new DropboxChannel());
+    private MessageReceiver transfer_peer;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_record);
+    protected void setup() {
         data_dispatcher=new WearMessageAPIDispatcher(this);
-        data_dispatcher.addReceiver(this);
+        transfer_peer=new TransferPeer(data_dispatcher, data_channel, LogTransferScreen.this);
         record_starter=(Button)findViewById(R.id.start_record);
         record_starter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(getApplicationContext(), "Starting record...", Toast.LENGTH_SHORT).show();
                 startNewLogSession();
             }
         });
@@ -43,11 +33,9 @@ public class LogTransferScreen extends Activity implements MessageReceiver {
         record_stopper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Toast.makeText(getApplicationContext(), "Sending test action log...", Toast.LENGTH_SHORT).show();
                 stopLogSession();
             }
         });
-
     }
 
     private void startNewLogSession() {
@@ -60,28 +48,14 @@ public class LogTransferScreen extends Activity implements MessageReceiver {
         data_dispatcher.sendAll(new Message("STOP"));
     }
 
-
     @Override
-    public void receive(Message msg) {
-        if ("ACTION_LOG".equals(msg.name)){
-            SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-            String time_suffix=date_format.format(new Date(System.currentTimeMillis()));
-            final String name="Log_"+time_suffix;
-            final ByteArrayInputStream data_stream=new ByteArrayInputStream(msg.payload);
-            new AsyncTask<Void, Void, Void>(){
-                @Override
-                protected Void doInBackground(Void... params) {
-                    data_channel.send(name, data_stream);
-                    return null;
-                }
-            }.execute();
-        } else if ("ERROR".equals(msg.name)){
-            Toast.makeText(getApplicationContext(), "Error at Wear side", Toast.LENGTH_SHORT).show();
-        }
+    protected int getLogViewId() {
+        return R.id.log_view;
     }
 
-    static void log(String msg){
-        Log.d("LTS", msg);
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_record;
     }
 
 }

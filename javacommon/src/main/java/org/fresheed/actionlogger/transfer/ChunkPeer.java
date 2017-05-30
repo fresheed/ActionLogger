@@ -1,7 +1,9 @@
 package org.fresheed.actionlogger.transfer;
 
+import org.fresheed.actionlogger.events.ActionEvent;
 import org.fresheed.actionlogger.events.ActionLog;
 import org.fresheed.actionlogger.events.ActionsSource;
+import org.fresheed.actionlogger.events.LoggingException;
 import org.fresheed.actionlogger.events.LoggingSession;
 import org.fresheed.actionlogger.utils.EventsLogCompressor;
 
@@ -32,6 +34,14 @@ public class ChunkPeer implements MessageReceiver {
         @Override
         public void run() {
             callback.inform("Timer task occured: "+new Random().nextInt());
+            //dispatcher.sendAll(new Message("ERROR"));
+            ActionLog test_log=new ActionLog(3);
+            try {
+                test_log.addEvent(new ActionEvent(100, new float[]{1.0f, 2.0f, 3.0f}));
+            } catch (LoggingException e) {
+                throw new RuntimeException("should not happen");
+            }
+            dispatcher.sendAll(new Message("ACTION_LOG", new EventsLogCompressor().compressEventsLog(test_log)));
         }
     };
 

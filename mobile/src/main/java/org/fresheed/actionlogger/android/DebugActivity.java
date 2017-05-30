@@ -1,11 +1,13 @@
 package org.fresheed.actionlogger.android;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import org.fresheed.actionlogger.R;
@@ -29,9 +31,6 @@ public abstract class DebugActivity extends AppCompatActivity implements Message
             last_messages.remove(last_messages.size()-1);
         }
         last_messages_view.setText(TextUtils.join("\n", last_messages));
-        last_messages_view=(TextView) findViewById(getLogViewId());
-
-        setup();
     }
 
     @Override
@@ -40,11 +39,29 @@ public abstract class DebugActivity extends AppCompatActivity implements Message
         setContentView(getLayoutId());
         Toolbar toolbar = (Toolbar) findViewById(R.id.navigation_toolbar);
         setSupportActionBar(toolbar);
+        last_messages_view=(TextView) findViewById(getLogViewId());
+
+        setup();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.navigation_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Class activity_to_call;
+        switch (item.getItemId()) {
+            case R.id.transfer_screen_link: activity_to_call=LogTransferScreen.class; break;
+            case R.id.processing_screen_link: activity_to_call=LogProcessingScreen.class; break;
+            default: return false;
+        }
+        Intent intent = new Intent(this, activity_to_call);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME);
+        startActivity(intent);
+        this.finish();
         return true;
     }
 

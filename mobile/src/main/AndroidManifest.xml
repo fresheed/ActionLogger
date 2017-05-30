@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".android.ActivityDetectionScreen"
+            android:name=".android.LogProcessingScreen"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

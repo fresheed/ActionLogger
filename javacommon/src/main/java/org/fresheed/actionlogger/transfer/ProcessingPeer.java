@@ -1,13 +1,12 @@
 package org.fresheed.actionlogger.transfer;
 
-import org.fresheed.actionlogger.data_channels.DataChannel;
+import org.fresheed.actionlogger.classification.ActivityKind;
+import org.fresheed.actionlogger.classification.LogClassifier;
 import org.fresheed.actionlogger.events.ActionLog;
 import org.fresheed.actionlogger.utils.EventsLogCompressor;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Random;
 
 /**
@@ -18,11 +17,13 @@ public class ProcessingPeer implements MessageReceiver {
     public static final int SUPPORTED_EVENT_CARDINALITY = 3;
     private final MessageDispatcher dispatcher;
     private final MessageProcessedCallback callback;
+    private final LogClassifier classifier;
 
-    public ProcessingPeer(MessageDispatcher dispatcher, MessageProcessedCallback callback){
+    public ProcessingPeer(MessageDispatcher dispatcher, MessageProcessedCallback callback, LogClassifier classifier){
         this.dispatcher=dispatcher;
         dispatcher.addReceiver(this);
         this.callback=callback;
+        this.classifier=classifier;
     }
 
     @Override
@@ -33,7 +34,11 @@ public class ProcessingPeer implements MessageReceiver {
             try {
                 data_stream.read(buffer);
                 ActionLog log=new EventsLogCompressor().decompressEventsLog(buffer, SUPPORTED_EVENT_CARDINALITY);
-                callback.inform("action log received with length"+log.getEvents().size());
+                System.out.println("before cls");
+                ActivityKind kind=classifier.classify(log);
+                System.out.println("after cls");
+                callback.inform("Current activity: "+kind.toString());
+                //callback.inform("chunk len:"+log.getEvents().size());
             } catch (IOException e) {
                 callback.failure("IOException on log reading:"+e.getStackTrace());
             } catch (EventsLogCompressor.LogEncodingException e) {

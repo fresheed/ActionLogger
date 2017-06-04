@@ -5,7 +5,7 @@ import android.widget.Button;
 
 import org.fresheed.actionlogger.R;
 import org.fresheed.actionlogger.android.WearMessageAPIDispatcher;
-import org.fresheed.actionlogger.android.mobile.AndroidWorkerChannel;
+import org.fresheed.actionlogger.android.AndroidWorkerChannel;
 import org.fresheed.actionlogger.data_channels.DataChannel;
 import org.fresheed.actionlogger.data_channels.DropboxChannel;
 import org.fresheed.actionlogger.transfer.Message;

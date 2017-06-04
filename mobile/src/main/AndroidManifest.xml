@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
-            android:name=".android.LogTransferScreen"
+            android:name=".android.mobile.screens.LogTransferScreen"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".android.LogProcessingScreen"
+            android:name=".android.mobile.screens.LogProcessingScreen"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

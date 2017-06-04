@@ -1,6 +1,5 @@
 package org.fresheed.actionlogger.classification;
 
-import org.fresheed.actionlogger.events.ActionEvent;
 import org.fresheed.actionlogger.events.ActionLog;
 
 /**
@@ -8,5 +7,5 @@ import org.fresheed.actionlogger.events.ActionLog;
  */
 
 public interface LogClassifier {
-    Activity classify(ActionLog log);
+    ActivityKind classify(ActionLog log);
 }

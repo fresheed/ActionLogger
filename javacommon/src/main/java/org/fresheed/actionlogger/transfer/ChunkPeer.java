@@ -1,9 +1,7 @@
 package org.fresheed.actionlogger.transfer;
 
-import org.fresheed.actionlogger.events.ActionEvent;
 import org.fresheed.actionlogger.events.ActionLog;
 import org.fresheed.actionlogger.events.ActionsSource;
-import org.fresheed.actionlogger.events.LoggingException;
 import org.fresheed.actionlogger.events.LoggingSession;
 import org.fresheed.actionlogger.utils.EventsLogCompressor;
 
@@ -22,10 +20,15 @@ public class ChunkPeer implements MessageReceiver {
     private final MessageProcessedCallback callback;
     private final ScheduledTimer timer;
 
-    public ChunkPeer(MessageDispatcher dispatcher, MessageProcessedCallback callback, ScheduledTimer timer){
+    private final ActionsSource actions_source;
+    private LoggingSession current_session=null;
+
+    public ChunkPeer(MessageDispatcher dispatcher, MessageProcessedCallback callback,
+                     ActionsSource actions_source, ScheduledTimer timer){
         this.dispatcher=dispatcher;
         dispatcher.addReceiver(this);
         this.callback=callback;
+        this.actions_source=actions_source;
         this.timer=timer;
         this.timer.addTask(restart_logging_task);
     }
@@ -33,17 +36,26 @@ public class ChunkPeer implements MessageReceiver {
     private final Runnable restart_logging_task=new Runnable() {
         @Override
         public void run() {
-            callback.inform("Timer task occured: "+new Random().nextInt());
+            //callback.inform("Timer task occured: "+new Random().nextInt());
             //dispatcher.sendAll(new Message("ERROR"));
-            ActionLog test_log=new ActionLog(3);
-            try {
-                test_log.addEvent(new ActionEvent(100, new float[]{1.0f, 2.0f, 3.0f}));
-                dispatcher.sendAll(new Message("ACTION_LOG", new EventsLogCompressor().compressEventsLog(test_log)));
-            } catch (LoggingException e) {
-                throw new RuntimeException("should not happen");
+
+//            ActionLog test_log=new ActionLog(3);
+//            try {
+//                test_log.addEvent(new ActionEvent(100, new float[]{1.0f, 2.0f, 3.0f}));
+//                dispatcher.sendAll(new Message("ACTION_LOG", new EventsLogCompressor().compressEventsLog(test_log)));
+//            } catch (LoggingException e) {
+//                throw new RuntimeException("should not happen");
+//            }
+
+            if (current_session!=null){
+                ActionLog log=current_session.stopAndRetrieve();
+                byte[] payload=new EventsLogCompressor().compressEventsLog(log);
+                dispatcher.sendAll(new Message("ACTION_LOG", payload));
+                callback.inform("sent log");
             }
+            current_session=actions_source.startLoggingSession();
         }
-    };
+   };
 
     @Override
     public void receive(Message msg) {
@@ -58,6 +70,10 @@ public class ChunkPeer implements MessageReceiver {
         } else if ("STOP".equals(msg.name)){
             if (state== CurrentState.LOGGING){
                 timer.stop();
+                if (current_session!=null){
+                    current_session.stopAndRetrieve();
+                }
+                callback.inform("stopped log collecting");
                 state= CurrentState.WAITING;
             } else {
                 callback.failure("No running session to stop");

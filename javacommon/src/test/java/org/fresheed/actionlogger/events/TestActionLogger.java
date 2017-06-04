@@ -15,10 +15,10 @@ import java.util.List;
 
 public class TestActionLogger{
 
-    private static final long DEFAULT_TIMESTAMP=101010;
-    public static final float[] DEFAULT_VALUES=new float[]{1.0f, 2.0f, 3.0f};
-    private static final ActionEvent default_event=new ActionEvent(DEFAULT_TIMESTAMP, DEFAULT_VALUES);
-
+//    private static final long DEFAULT_TIMESTAMP=101010;
+//    public static final float[] DEFAULT_VALUES=new float[]{1.0f, 2.0f, 3.0f};
+//    private static final ActionEvent default_event=new ActionEvent(DEFAULT_TIMESTAMP, DEFAULT_VALUES);
+//
 //    @Test
 //    public void testIfNoActionsLogged() throws LoggingException {
 //        ActionRecorder logger=new ActionRecorder();

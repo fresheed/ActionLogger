@@ -1,4 +1,4 @@
-package org.fresheed.actionlogger.android;
+package org.fresheed.actionlogger.android.mobile.screens;
 
 import android.content.Intent;
 import android.os.Bundle;

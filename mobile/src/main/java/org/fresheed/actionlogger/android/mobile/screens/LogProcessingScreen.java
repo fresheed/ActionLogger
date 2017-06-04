@@ -1,16 +1,14 @@
-package org.fresheed.actionlogger.android;
+package org.fresheed.actionlogger.android.mobile.screens;
 
 import android.view.View;
 import android.widget.Button;
 
 import org.fresheed.actionlogger.R;
-import org.fresheed.actionlogger.data_channels.DataChannel;
-import org.fresheed.actionlogger.data_channels.DropboxChannel;
+import org.fresheed.actionlogger.android.WearMessageAPIDispatcher;
 import org.fresheed.actionlogger.transfer.Message;
 import org.fresheed.actionlogger.transfer.MessageDispatcher;
 import org.fresheed.actionlogger.transfer.MessageReceiver;
 import org.fresheed.actionlogger.transfer.ProcessingPeer;
-import org.fresheed.actionlogger.transfer.TransferPeer;
 
 public class LogProcessingScreen extends DebugActivity{
 

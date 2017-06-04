@@ -4,6 +4,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.dropbox.core:dropbox-core-sdk:2.1.2'
+    compile 'com.edwardraff:JSAT:0.0.8'
 }
 
 sourceCompatibility = "1.7"

@@ -4,7 +4,7 @@ package org.fresheed.actionlogger.classification;
  * Created by fresheed on 03.06.17.
  */
 
-public enum Activity {
+public enum ActivityKind {
     WALK,
     PUSHUPS,
     SITS,

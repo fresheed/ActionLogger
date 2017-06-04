@@ -1,9 +1,11 @@
-package org.fresheed.actionlogger.android;
+package org.fresheed.actionlogger.android.mobile.screens;
 
 import android.view.View;
 import android.widget.Button;
 
 import org.fresheed.actionlogger.R;
+import org.fresheed.actionlogger.android.WearMessageAPIDispatcher;
+import org.fresheed.actionlogger.android.mobile.AndroidWorkerChannel;
 import org.fresheed.actionlogger.data_channels.DataChannel;
 import org.fresheed.actionlogger.data_channels.DropboxChannel;
 import org.fresheed.actionlogger.transfer.Message;

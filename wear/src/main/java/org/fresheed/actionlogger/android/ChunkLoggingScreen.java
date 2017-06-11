@@ -47,7 +47,8 @@ public class ChunkLoggingScreen extends Activity implements MessageProcessedCall
             public void onLayoutInflated(WatchViewStub stub) {
                 data_dispatcher=new WearMessageAPIDispatcher(ChunkLoggingScreen.this);
                 actions_source =new DeviceSensorActionsSource(ChunkLoggingScreen.this, Sensor.TYPE_ACCELEROMETER);
-                wear_peer=new ChunkPeer(data_dispatcher, ChunkLoggingScreen.this, new AndroidTimer(1000, 1000));
+                wear_peer=new ChunkPeer(data_dispatcher, ChunkLoggingScreen.this,
+                        actions_source, new AndroidTimer(1500, 1500));
                 last_messages_view=(TextView) findViewById(R.id.wear_last_messages);
             }
         });

@@ -1,18 +1,14 @@
-package org.fresheed.actionlogger.android;
+package org.fresheed.actionlogger.android.mobile.screens;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
@@ -32,16 +28,8 @@ import com.google.android.gms.fitness.request.SensorRequest;
 import com.google.android.gms.fitness.result.DataSourcesResult;
 
 import org.fresheed.actionlogger.R;
-import org.fresheed.actionlogger.data_channels.DataChannel;
-import org.fresheed.actionlogger.data_channels.DropboxChannel;
-import org.fresheed.actionlogger.transfer.Message;
-import org.fresheed.actionlogger.transfer.MessageDispatcher;
-import org.fresheed.actionlogger.transfer.MessageReceiver;
 
-import java.io.ByteArrayInputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 

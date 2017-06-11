@@ -38,9 +38,9 @@ public abstract class DebugActivity extends AppCompatActivity implements Message
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
         Toolbar toolbar = (Toolbar) findViewById(R.id.navigation_toolbar);
+        toolbar.setSubtitle(getClass().getSimpleName());
         setSupportActionBar(toolbar);
         last_messages_view=(TextView) findViewById(getLogViewId());
-
         setup();
     }
 

@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import org.fresheed.actionlogger.R;
+import org.fresheed.actionlogger.android.WearMessageAPIDispatcher;
 import org.fresheed.actionlogger.transfer.MessageProcessedCallback;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public abstract class DebugActivity extends AppCompatActivity implements Message
 
     protected TextView last_messages_view;
     protected final List<String> last_messages=new ArrayList<>();
+    protected WearMessageAPIDispatcher data_dispatcher;
 
     protected void updateLogs(String message){
         last_messages.add(0, message);
@@ -36,12 +38,25 @@ public abstract class DebugActivity extends AppCompatActivity implements Message
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        data_dispatcher=new WearMessageAPIDispatcher(this);
         setContentView(getLayoutId());
         Toolbar toolbar = (Toolbar) findViewById(R.id.navigation_toolbar);
         toolbar.setSubtitle(getClass().getSimpleName());
         setSupportActionBar(toolbar);
         last_messages_view=(TextView) findViewById(getLogViewId());
         setup();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        data_dispatcher.startProcessing();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        data_dispatcher.stopProcessing();
     }
 
     @Override

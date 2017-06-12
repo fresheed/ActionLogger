@@ -16,13 +16,11 @@ import org.fresheed.actionlogger.transfer.ProcessingPeer;
 
 public class LogProcessingScreen extends DebugActivity{
 
-    private MessageDispatcher data_dispatcher;
     private Button record_starter, record_stopper;
     private MessageReceiver processing_peer;
 
     @Override
     protected void setup() {
-        data_dispatcher=new WearMessageAPIDispatcher(this);
         LogClassifier classifier=getActivityClassifier();
         processing_peer=new ProcessingPeer(data_dispatcher, LogProcessingScreen.this, classifier);
         record_starter=(Button)findViewById(R.id.start_record);

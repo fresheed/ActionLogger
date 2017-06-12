@@ -15,14 +15,12 @@ import org.fresheed.actionlogger.transfer.TransferPeer;
 
 public class LogTransferScreen extends DebugActivity{
 
-    private MessageDispatcher data_dispatcher;
     private Button record_starter, record_stopper;
     private final DataChannel data_channel=new AndroidWorkerChannel(new DropboxChannel());
     private MessageReceiver transfer_peer;
 
     @Override
     protected void setup() {
-        data_dispatcher=new WearMessageAPIDispatcher(this);
         transfer_peer=new TransferPeer(data_dispatcher, data_channel, LogTransferScreen.this);
         record_starter=(Button)findViewById(R.id.start_record);
         record_starter.setOnClickListener(new View.OnClickListener() {

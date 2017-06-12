@@ -31,7 +31,7 @@ public class ChunkLoggingScreen extends Activity implements MessageProcessedCall
 
     private ActionsSource actions_source;
 
-    private MessageDispatcher data_dispatcher;
+    private WearMessageAPIDispatcher data_dispatcher;
     private MessageReceiver wear_peer;
 
     private TextView last_messages_view;
@@ -42,19 +42,32 @@ public class ChunkLoggingScreen extends Activity implements MessageProcessedCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
+        data_dispatcher=new WearMessageAPIDispatcher(ChunkLoggingScreen.this);
+        actions_source =new DeviceSensorActionsSource(ChunkLoggingScreen.this, Sensor.TYPE_ACCELEROMETER);
+        wear_peer=new ChunkPeer(data_dispatcher, ChunkLoggingScreen.this,
+                actions_source, new AndroidTimer(1500, 1500));
         stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
             @Override
             public void onLayoutInflated(WatchViewStub stub) {
-                data_dispatcher=new WearMessageAPIDispatcher(ChunkLoggingScreen.this);
-                actions_source =new DeviceSensorActionsSource(ChunkLoggingScreen.this, Sensor.TYPE_ACCELEROMETER);
-                wear_peer=new ChunkPeer(data_dispatcher, ChunkLoggingScreen.this,
-                        actions_source, new AndroidTimer(1500, 1500));
                 last_messages_view=(TextView) findViewById(R.id.wear_last_messages);
             }
         });
         // should be used for research purposes only!
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        data_dispatcher.startProcessing();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        data_dispatcher.stopProcessing();
+    }
+
 
     private class AndroidTimer implements ScheduledTimer {
         private final int delay, period;

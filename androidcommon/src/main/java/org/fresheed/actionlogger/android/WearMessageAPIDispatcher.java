@@ -35,8 +35,8 @@ public class WearMessageAPIDispatcher implements MessageDispatcher, GoogleApiCli
     private static final String MESSAGES_PATH_PREFIX ="/LOGGER_MESSAGES-";
     private static final int MAX_PAYLOAD_LENGTH=100000;
 
-    private GoogleApiClient api_client;
-    private Context android_context;
+    private final GoogleApiClient api_client;
+    private final Context android_context;
 
     private final Set<MessageReceiver> receivers=new HashSet<>();
 
@@ -47,20 +47,23 @@ public class WearMessageAPIDispatcher implements MessageDispatcher, GoogleApiCli
                 .addOnConnectionFailedListener(this)
                 .addApi(Wearable.API)
                 .build();
+    }
+
+    // These methods break incapsulation, but since lifecycle listeners don't work well
+    // we have to control dispatcher manually
+
+    public void startProcessing(){
         if (!api_client.isConnected()) {
             api_client.connect();
             System.err.println("Calling connect from dispatcher");
-            //Thread.dumpStack();
         }
+    }
 
-        new LifecycleListener(){
-            @Override
-            public void onStoppedCallback() {
-                Wearable.MessageApi.removeListener(api_client, WearMessageAPIDispatcher.this);
-                api_client.disconnect();
-                System.err.println("Disconnecting");
-            }
-        }.register(owner);
+    public void stopProcessing(){
+        Wearable.MessageApi.removeListener(api_client, WearMessageAPIDispatcher.this);
+        if (!api_client.isConnected()) {
+            api_client.disconnect();
+        }
     }
 
     @Override
@@ -83,8 +86,6 @@ public class WearMessageAPIDispatcher implements MessageDispatcher, GoogleApiCli
                 return null;
             }
         }.execute();
-
-
     }
 
     private void notifyReceivers(Message msg){

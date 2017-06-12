@@ -8,9 +8,31 @@
     tools:deviceIds="wear_square">
 
     <TextView
+        android:text="screen name ..."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/wear_screen_id" />
+
+    <TextView
         android:id="@+id/wear_last_messages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="___" />
+
+    <!--<Space-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="30dp" />-->
+
+    <Button
+        android:text="Transfer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/switch_to_transfer" />
+
+    <Button
+        android:text="Processing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/switch_to_processing" />
 
 </LinearLayout>

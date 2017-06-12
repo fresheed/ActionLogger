@@ -50,12 +50,14 @@ public abstract class DebugActivity extends AppCompatActivity implements Message
     @Override
     protected void onStart() {
         super.onStart();
+        System.err.println("onstart");
         data_dispatcher.startProcessing();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        System.err.println("onstop");
         data_dispatcher.stopProcessing();
     }
 

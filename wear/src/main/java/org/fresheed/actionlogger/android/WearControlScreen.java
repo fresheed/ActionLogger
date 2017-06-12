@@ -28,63 +28,25 @@ import java.util.Queue;
  * Created by fresheed on 02.02.17.
  */
 
-public class WearControlScreen extends Activity implements MessageProcessedCallback {
-
-    private static final String TAG="WearControlScreen";
+public class WearControlScreen extends WearDebugScreen {
 
     private ActionsSource actions_source;
-
-    private WearMessageAPIDispatcher data_dispatcher;
     private MessageReceiver wear_peer;
 
-    private TextView last_messages_view;
-    private final List<String> last_messages=new ArrayList<>();
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        final WatchViewStub stub = (WatchViewStub) findViewById(R.id.watch_view_stub);
-        data_dispatcher=new WearMessageAPIDispatcher(WearControlScreen.this);
+    protected void setup() {
         actions_source =new DeviceSensorActionsSource(WearControlScreen.this, Sensor.TYPE_ACCELEROMETER);
         wear_peer=new WearPeer(data_dispatcher, actions_source, WearControlScreen.this);
-        stub.setOnLayoutInflatedListener(new WatchViewStub.OnLayoutInflatedListener() {
-            @Override
-            public void onLayoutInflated(WatchViewStub stub) {
-                last_messages_view=(TextView) findViewById(R.id.wear_last_messages);
-            }
-        });
-        // should be used for research purposes only!
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        data_dispatcher.startProcessing();
+    protected int getLayoutId() {
+        return R.layout.activity_main;
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        data_dispatcher.stopProcessing();
+    protected int getLogViewId() {
+        return R.id.wear_last_messages;
     }
 
-    @Override
-    public void inform(String message) {
-        updateLogs(message);
-    }
-
-    @Override
-    public void failure(String message) {
-        updateLogs(message);
-    }
-
-    private void updateLogs(String message){
-        last_messages.add(0, message);
-        if (last_messages.size()>=5){
-            last_messages.remove(last_messages.size()-1);
-        }
-        last_messages_view.setText(TextUtils.join("\n", last_messages));
-    }
 }

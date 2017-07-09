@@ -1,5 +1,7 @@
 language: android
 jdk: oraclejdk8 # to avoid 'Unsupported major.minor version' failure at Travis
+notifications:
+  email: false
 
 # gradle caching following Travis docs
 before_cache:
